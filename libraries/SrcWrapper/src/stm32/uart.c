@@ -192,11 +192,7 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   /* Set the NVIC priority for future interrupts */
   HAL_NVIC_SetPriority(obj->irq, UART_IRQ_PRIO, UART_IRQ_SUBPRIO);
 
-  if (uart_rx == NP) {
-    if (HAL_HalfDuplex_Init(huart) != HAL_OK) {
-      return;
-    }
-  } else if (HAL_UART_Init(huart) != HAL_OK) {
+  if (HAL_UART_Init(huart) != HAL_OK) {
     return;
   }
 }
@@ -399,32 +395,6 @@ void uart_attach_tx_callback(serial_t *obj, int (*callback)(serial_t *), size_t 
 
   /* Enable interrupt */
   HAL_NVIC_EnableIRQ(obj->irq);
-}
-
-/**
- * Enable transmitter for half-duplex mode. NOOP in full-fuplex mode
- *
- * @param obj : pointer to serial_t structure
- * @retval none
- */
-void uart_enable_tx(serial_t *obj)
-{
-  if (obj != NULL && obj->pin_rx == NC) {
-    HAL_HalfDuplex_EnableTransmitter(uart_handlers[obj->index]);
-  }
-}
-
-/**
- * Enable receiver for half-duplex mode. NOOP in full-fuplex mode
- *
- * @param obj : pointer to serial_t structure
- * @retval none
- */
-void uart_enable_rx(serial_t *obj)
-{
-  if (obj != NULL && obj->pin_rx == NC) {
-    HAL_HalfDuplex_EnableReceiver(uart_handlers[obj->index]);
-  }
 }
 
 /**
