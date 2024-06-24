@@ -894,6 +894,78 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData,
 }
 
 /**
+  * @brief  Start Receive operation in interrupt mode.
+  * @note   This function could be called by all HAL UART API providing reception in Interrupt mode.
+  * @note   When calling this function, parameters validity is considered as already checked,
+  *         i.e. Rx State, buffer address, ...
+  *         UART Handle is assumed as Locked.
+  * @param  huart UART handle.
+  * @param  pData Pointer to data buffer (u8 or u16 data elements).
+  * @param  Size  Amount of data elements (u8 or u16) to be received.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef UART_Start_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)
+{
+  huart->pRxBuffPtr  = pData;
+  huart->RxXferSize  = Size;
+  huart->RxXferCount = Size;
+  huart->RxISR       = NULL;
+
+  /* Computation of UART mask to apply to RDR register */
+  UART_MASK_COMPUTATION(huart);
+
+  huart->ErrorCode = HAL_UART_ERROR_NONE;
+  huart->RxState = HAL_UART_STATE_BUSY_RX;
+
+  /* Enable the UART Error Interrupt: (Frame error, noise error, overrun error) */
+  ATOMIC_SET_BIT(huart->Instance->CR3, USART_CR3_EIE);
+
+  /* Configure Rx interrupt processing */
+  if ((huart->FifoMode == UART_FIFOMODE_ENABLE) && (Size >= huart->NbRxDataToProcess))
+  {
+    /* Set the Rx ISR function pointer according to the data word length */
+    if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
+    {
+      huart->RxISR = UART_RxISR_16BIT_FIFOEN;
+    }
+    else
+    {
+      huart->RxISR = UART_RxISR_8BIT_FIFOEN;
+    }
+
+    /* Enable the UART Parity Error interrupt and RX FIFO Threshold interrupt */
+    if (huart->Init.Parity != UART_PARITY_NONE)
+    {
+      ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_PEIE);
+    }
+    ATOMIC_SET_BIT(huart->Instance->CR3, USART_CR3_RXFTIE);
+  }
+  else
+  {
+    /* Set the Rx ISR function pointer according to the data word length */
+    if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
+    {
+      huart->RxISR = UART_RxISR_16BIT;
+    }
+    else
+    {
+      huart->RxISR = UART_RxISR_8BIT;
+    }
+
+    /* Enable the UART Parity Error interrupt and Data Register Not Empty interrupt */
+    if (huart->Init.Parity != UART_PARITY_NONE)
+    {
+      ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
+    }
+    else
+    {
+      ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_RXNEIE_RXFNEIE);
+    }
+  }
+  return HAL_OK;
+}
+
+/**
   * @brief Handle UART interrupt request.
   * @param huart UART handle.
   * @retval None
