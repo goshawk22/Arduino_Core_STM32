@@ -424,12 +424,6 @@ size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
   size_t available_till_buffer_end = SERIAL_TX_BUFFER_SIZE - _serial.tx_head;
 
   _written = true;
-  if (isHalfDuplex()) {
-    if (_rx_enabled) {
-      _rx_enabled = false;
-      uart_enable_tx(&_serial);
-    }
-  }
 
   // If the output buffer is full, there's nothing for it other than to
   // wait for the interrupt handler to free space
@@ -538,11 +532,6 @@ void HardwareSerial::setRtsCts(PinName _rts, PinName _cts)
 void HardwareSerial::setHalfDuplex(void)
 {
   _serial.pin_rx = NC;
-}
-
-bool HardwareSerial::isHalfDuplex(void) const
-{
-  return _serial.pin_rx == NC;
 }
 
 #endif // HAL_UART_MODULE_ENABLED && !HAL_UART_MODULE_ONLY
