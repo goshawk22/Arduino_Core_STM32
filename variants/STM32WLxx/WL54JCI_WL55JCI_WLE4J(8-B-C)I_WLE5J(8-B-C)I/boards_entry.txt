@@ -5,7 +5,7 @@
 
 # Generic WL54JCIx
 GenWL.menu.pnum.GENERIC_WL54JCIX=Generic WL54JCIx
-GenWL.menu.pnum.GENERIC_WL54JCIX.upload.maximum_size=262144
+GenWL.menu.pnum.GENERIC_WL54JCIX.upload.maximum_size=524288
 GenWL.menu.pnum.GENERIC_WL54JCIX.upload.maximum_data_size=65536
 GenWL.menu.pnum.GENERIC_WL54JCIX.build.board=GENERIC_WL54JCIX
 GenWL.menu.pnum.GENERIC_WL54JCIX.build.product_line=STM32WL54xx
@@ -13,7 +13,7 @@ GenWL.menu.pnum.GENERIC_WL54JCIX.build.variant=STM32WLxx/WL54JCI_WL55JCI_WLE4J(8
 
 # Generic WL55JCIx
 GenWL.menu.pnum.GENERIC_WL55JCIX=Generic WL55JCIx
-GenWL.menu.pnum.GENERIC_WL55JCIX.upload.maximum_size=262144
+GenWL.menu.pnum.GENERIC_WL55JCIX.upload.maximum_size=524288
 GenWL.menu.pnum.GENERIC_WL55JCIX.upload.maximum_data_size=65536
 GenWL.menu.pnum.GENERIC_WL55JCIX.build.board=GENERIC_WL55JCIX
 GenWL.menu.pnum.GENERIC_WL55JCIX.build.product_line=STM32WL55xx
@@ -37,7 +37,7 @@ GenWL.menu.pnum.GENERIC_WLE4JBIX.build.variant=STM32WLxx/WL54JCI_WL55JCI_WLE4J(8
 
 # Generic WLE4JCIx
 GenWL.menu.pnum.GENERIC_WLE4JCIX=Generic WLE4JCIx
-GenWL.menu.pnum.GENERIC_WLE4JCIX.upload.maximum_size=262144
+GenWL.menu.pnum.GENERIC_WLE4JCIX.upload.maximum_size=524288
 GenWL.menu.pnum.GENERIC_WLE4JCIX.upload.maximum_data_size=65536
 GenWL.menu.pnum.GENERIC_WLE4JCIX.build.board=GENERIC_WLE4JCIX
 GenWL.menu.pnum.GENERIC_WLE4JCIX.build.product_line=STM32WLE4xx
@@ -61,7 +61,7 @@ GenWL.menu.pnum.GENERIC_WLE5JBIX.build.variant=STM32WLxx/WL54JCI_WL55JCI_WLE4J(8
 
 # Generic WLE5JCIx
 GenWL.menu.pnum.GENERIC_WLE5JCIX=Generic WLE5JCIx
-GenWL.menu.pnum.GENERIC_WLE5JCIX.upload.maximum_size=262144
+GenWL.menu.pnum.GENERIC_WLE5JCIX.upload.maximum_size=524288
 GenWL.menu.pnum.GENERIC_WLE5JCIX.upload.maximum_data_size=65536
 GenWL.menu.pnum.GENERIC_WLE5JCIX.build.board=GENERIC_WLE5JCIX
 GenWL.menu.pnum.GENERIC_WLE5JCIX.build.product_line=STM32WLE5xx
