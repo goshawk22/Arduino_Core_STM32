@@ -42,76 +42,6 @@
     HardwareSerial Serial2(USART2);
     void serialEvent2() __attribute__((weak));
   #endif
-
-  #if defined(HAVE_HWSERIAL3)
-    HardwareSerial Serial3(USART3);
-    void serialEvent3() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL4)
-    #if defined(USART4)
-      HardwareSerial Serial4(USART4);
-    #else
-      HardwareSerial Serial4(UART4);
-    #endif
-    void serialEvent4() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL5)
-    #if defined(USART5)
-      HardwareSerial Serial5(USART5);
-    #else
-      HardwareSerial Serial5(UART5);
-    #endif
-    void serialEvent5() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL6)
-    HardwareSerial Serial6(USART6);
-    void serialEvent6() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL7)
-    #if defined(USART7)
-      HardwareSerial Serial7(USART7);
-    #else
-      HardwareSerial Serial7(UART7);
-    #endif
-    void serialEvent7() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL8)
-    #if defined(USART8)
-      HardwareSerial Serial8(USART8);
-    #else
-      HardwareSerial Serial8(UART8);
-    #endif
-    void serialEvent8() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL9)
-    HardwareSerial Serial9(UART9);
-    void serialEvent9() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIAL10)
-    #if defined(USART10)
-      HardwareSerial Serial10(USART10);
-    #else
-      HardwareSerial Serial10(UART10);
-    #endif
-    void serialEvent10() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIALLP1)
-    HardwareSerial SerialLP1(LPUART1);
-    void serialEventLP1() __attribute__((weak));
-  #endif
-
-  #if defined(HAVE_HWSERIALLP2)
-    HardwareSerial SerialLP2(LPUART2);
-    void serialEventLP2() __attribute__((weak));
-  #endif
 #endif // HAVE_HWSERIALx
 
 // Constructors ////////////////////////////////////////////////////////////////
@@ -123,180 +53,6 @@ HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx, uint32_t _rts, uint32
 HardwareSerial::HardwareSerial(PinName _rx, PinName _tx, PinName _rts, PinName _cts)
 {
   init(_rx, _tx, _rts, _cts);
-}
-
-HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex)
-{
-  // If PIN_SERIALy_RX is not defined assume half-duplex
-  _serial.pin_rx = NC;
-  // If Serial is defined in variant set
-  // the Rx/Tx pins for com port if defined
-#if defined(Serial) && defined(PIN_SERIAL_TX)
-#if !defined(USBCON) || defined(USBD_USE_CDC) && defined(DISABLE_GENERIC_SERIALUSB)
-  if ((void *)this == (void *)&Serial) {
-#if defined(PIN_SERIAL_RX)
-    setRx(PIN_SERIAL_RX);
-#endif
-    setTx(PIN_SERIAL_TX);
-  } else
-#endif
-#endif
-#if defined(PIN_SERIAL1_TX) && defined(USART1_BASE)
-    if (peripheral == USART1) {
-#if defined(PIN_SERIAL1_RX)
-      setRx(PIN_SERIAL1_RX);
-#endif
-      setTx(PIN_SERIAL1_TX);
-    } else
-#endif
-#if defined(PIN_SERIAL2_TX) && defined(USART2_BASE)
-      if (peripheral == USART2) {
-#if defined(PIN_SERIAL2_RX)
-        setRx(PIN_SERIAL2_RX);
-#endif
-        setTx(PIN_SERIAL2_TX);
-      } else
-#endif
-#if defined(PIN_SERIAL3_TX) && defined(USART3_BASE)
-        if (peripheral == USART3) {
-#if defined(PIN_SERIAL3_RX)
-          setRx(PIN_SERIAL3_RX);
-#endif
-          setTx(PIN_SERIAL3_TX);
-        } else
-#endif
-#if defined(PIN_SERIAL4_TX) &&\
-   (defined(USART4_BASE) || defined(UART4_BASE))
-#if defined(USART4_BASE)
-          if (peripheral == USART4)
-#elif defined(UART4_BASE)
-          if (peripheral == UART4)
-#endif
-          {
-#if defined(PIN_SERIAL4_RX)
-            setRx(PIN_SERIAL4_RX);
-#endif
-            setTx(PIN_SERIAL4_TX);
-          } else
-#endif
-#if defined(PIN_SERIAL5_TX) &&\
-   (defined(USART5_BASE) || defined(UART5_BASE))
-#if defined(USART5_BASE)
-            if (peripheral == USART5)
-#elif defined(UART5_BASE)
-            if (peripheral == UART5)
-#endif
-            {
-#if defined(PIN_SERIAL5_RX)
-              setRx(PIN_SERIAL5_RX);
-#endif
-              setTx(PIN_SERIAL5_TX);
-            } else
-#endif
-#if defined(PIN_SERIAL6_TX) && defined(USART6_BASE)
-              if (peripheral == USART6) {
-#if defined(PIN_SERIAL6_RX)
-                setRx(PIN_SERIAL6_RX);
-#endif
-                setTx(PIN_SERIAL6_TX);
-              } else
-#endif
-#if defined(PIN_SERIAL7_TX) &&\
-   (defined(USART7_BASE) || defined(UART7_BASE))
-#if defined(USART7_BASE)
-                if (peripheral == USART7)
-#elif defined(UART7_BASE)
-                if (peripheral == UART7)
-#endif
-                {
-#if defined(PIN_SERIAL7_RX)
-                  setRx(PIN_SERIAL7_RX);
-#endif
-                  setTx(PIN_SERIAL7_TX);
-                } else
-#endif
-#if defined(PIN_SERIAL8_TX) &&\
-   (defined(USART8_BASE) || defined(UART8_BASE))
-#if defined(USART8_BASE)
-                  if (peripheral == USART8)
-#elif defined(UART8_BASE)
-                  if (peripheral == UART8)
-#endif
-                  {
-#if defined(PIN_SERIAL8_RX)
-                    setRx(PIN_SERIAL8_RX);
-#endif
-                    setTx(PIN_SERIAL8_TX);
-                  } else
-#endif
-#if defined(PIN_SERIAL9_TX) && defined(UART9_BASE)
-                    if (peripheral == UART9) {
-#if defined(PIN_SERIAL9_RX)
-                      setRx(PIN_SERIAL9_RX);
-#endif
-                      setTx(PIN_SERIAL9_TX);
-                    } else
-#endif
-#if defined(PIN_SERIAL10_TX) &&\
-   (defined(USART10_BASE) || defined(UART10_BASE))
-#if defined(USART10_BASE)
-                      if (peripheral == USART10)
-#elif defined(UART10_BASE)
-                      if (peripheral == UART10)
-#endif
-                      {
-#if defined(PIN_SERIAL10_RX)
-                        setRx(PIN_SERIAL10_RX);
-#endif
-                        setTx(PIN_SERIAL10_TX);
-                      } else
-#endif
-#if defined(PIN_SERIALLP1_TX) && defined(LPUART1_BASE)
-                        if (peripheral == LPUART1) {
-#if defined(PIN_SERIALLP1_RX)
-                          setRx(PIN_SERIALLP1_RX);
-#endif
-                          setTx(PIN_SERIALLP1_TX);
-                        } else
-#endif
-#if defined(PIN_SERIALLP2_TX) && defined(LPUART2_BASE)
-                          if (peripheral == LPUART2) {
-#if defined(PIN_SERIALLP2_RX)
-                            setRx(PIN_SERIALLP2_RX);
-#endif
-                            setTx(PIN_SERIALLP2_TX);
-                          } else
-#endif
-#if defined(PIN_SERIAL_TX)
-                            // If PIN_SERIAL_TX is defined but Serial is mapped on other peripheral
-                            // (usually SerialUSB) use the pins defined for specified peripheral
-                            // instead of the first one found
-                            if ((pinmap_peripheral(digitalPinToPinName(PIN_SERIAL_TX), PinMap_UART_TX) == peripheral)) {
-#if defined(PIN_SERIAL_RX)
-                              setRx(PIN_SERIAL_RX);
-#endif
-                              setTx(PIN_SERIAL_TX);
-                            } else
-#endif
-                            {
-                              // else get the pins of the first peripheral occurrence in PinMap
-                              _serial.pin_rx = pinmap_pin(peripheral, PinMap_UART_RX);
-                              _serial.pin_tx = pinmap_pin(peripheral, PinMap_UART_TX);
-                            }
-  if (halfDuplex == HALF_DUPLEX_ENABLED) {
-    _serial.pin_rx = NC;
-  }
-  init(_serial.pin_rx, _serial.pin_tx);
-}
-
-HardwareSerial::HardwareSerial(uint32_t _rxtx)
-{
-  init(NC, digitalPinToPinName(_rxtx));
-}
-
-HardwareSerial::HardwareSerial(PinName _rxtx)
-{
-  init(NC, _rxtx);
 }
 
 void HardwareSerial::init(PinName _rx, PinName _tx, PinName _rts, PinName _cts)
@@ -315,16 +71,6 @@ void HardwareSerial::init(PinName _rx, PinName _tx, PinName _rts, PinName _cts)
   _serial.tx_buff = _tx_buffer;
   _serial.tx_head = 0;
   _serial.tx_tail = 0;
-}
-
-void HardwareSerial::configForLowPower(void)
-{
-#if defined(HAL_PWR_MODULE_ENABLED) && (defined(UART_IT_WUF) || defined(LPUART1_BASE))
-  // Reconfigure properly Serial instance to use HSI as clock source
-  end();
-  uart_config_lowpower(&_serial);
-  begin(_baud, _config);
-#endif
 }
 
 // Actual interrupt handlers //////////////////////////////////////////////////////////////
@@ -434,7 +180,6 @@ void HardwareSerial::begin(unsigned long baud, byte config)
   }
 
   uart_init(&_serial, (uint32_t)baud, databits, parity, stopbits);
-  enableHalfDuplexRx();
   uart_attach_rx_callback(&_serial, _rx_complete_irq);
 }
 
@@ -465,7 +210,6 @@ int HardwareSerial::peek(void)
 
 int HardwareSerial::read(void)
 {
-  enableHalfDuplexRx();
   // if the head isn't ahead of the tail, we don't have any characters
   if (_serial.rx_head == _serial.rx_tail) {
     return -1;
@@ -640,19 +384,6 @@ void HardwareSerial::setHalfDuplex(void)
 bool HardwareSerial::isHalfDuplex(void) const
 {
   return _serial.pin_rx == NC;
-}
-
-void HardwareSerial::enableHalfDuplexRx(void)
-{
-  if (isHalfDuplex()) {
-    // In half-duplex mode we have to wait for all TX characters to
-    // be transmitted before we can receive data.
-    flush();
-    if (!_rx_enabled) {
-      _rx_enabled = true;
-      uart_enable_rx(&_serial);
-    }
-  }
 }
 
 #endif // HAL_UART_MODULE_ENABLED && !HAL_UART_MODULE_ONLY
