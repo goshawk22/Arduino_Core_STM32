@@ -52,7 +52,7 @@
   * @{
   */
 
-#ifdef HAL_UART_EX_MODULE_ENABLED
+#ifdef HAL_UART_MODULE_ENABLED
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
