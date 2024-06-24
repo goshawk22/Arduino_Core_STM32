@@ -68,12 +68,6 @@ typedef enum {
 #if defined(UART10_BASE) || defined(USART10_BASE)
   UART10_INDEX,
 #endif
-#if defined(LPUART1_BASE)
-  LPUART1_INDEX,
-#endif
-#if defined(LPUART2_BASE)
-  LPUART2_INDEX,
-#endif
   UART_NUM
 } uart_index_t;
 
@@ -235,24 +229,6 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
     obj->irq = USART6_IRQn;
   }
 #endif
-#if defined(LPUART1_BASE)
-  else if (obj->uart == LPUART1) {
-    __HAL_RCC_LPUART1_FORCE_RESET();
-    __HAL_RCC_LPUART1_RELEASE_RESET();
-    __HAL_RCC_LPUART1_CLK_ENABLE();
-    obj->index = LPUART1_INDEX;
-    obj->irq = LPUART1_IRQn;
-  }
-#endif
-#if defined(LPUART2_BASE)
-  else if (obj->uart == LPUART2) {
-    __HAL_RCC_LPUART2_FORCE_RESET();
-    __HAL_RCC_LPUART2_RELEASE_RESET();
-    __HAL_RCC_LPUART2_CLK_ENABLE();
-    obj->index = LPUART2_INDEX;
-    obj->irq = LPUART2_IRQn;
-  }
-#endif
 #if defined(UART7_BASE)
   else if (obj->uart == UART7) {
     __HAL_RCC_UART7_FORCE_RESET();
@@ -353,108 +329,6 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   /* Set the NVIC priority for future interrupts */
   HAL_NVIC_SetPriority(obj->irq, UART_IRQ_PRIO, UART_IRQ_SUBPRIO);
 
-#if defined(LPUART1_BASE) || defined(LPUART2_BASE)
-  /*
-   * Note that LPUART clock source must be in the range
-   * [3 x baud rate, 4096 x baud rate]
-   * check Reference Manual
-   */
-  if ((obj->uart == LPUART1)
-#if defined(LPUART2_BASE)
-      || (obj->uart == LPUART2)
-#endif
-     ) {
-    if (baudrate <= 9600) {
-#if defined(USART_CR3_UCESM)
-      HAL_UARTEx_EnableClockStopMode(huart);
-#endif
-      HAL_UARTEx_EnableStopMode(huart);
-    } else {
-#if defined(USART_CR3_UCESM)
-      HAL_UARTEx_DisableClockStopMode(huart);
-#endif
-      HAL_UARTEx_DisableStopMode(huart);
-    }
-    /* Trying default LPUART clock source */
-    if (uart_rx == NP) {
-      if (HAL_HalfDuplex_Init(huart) == HAL_OK) {
-        return;
-      }
-    } else if (HAL_UART_Init(huart) == HAL_OK) {
-      return;
-    }
-    /* Trying to change LPUART clock source */
-    /* If baudrate is lower than or equal to 9600 try to change to LSE */
-    if (baudrate <= 9600) {
-      /* Enable the clock if not already set by user */
-      enableClock(LSE_CLOCK);
-      if (obj->uart == LPUART1) {
-        __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_LSE);
-      }
-#if defined(LPUART2_BASE)
-      if (obj->uart == LPUART2) {
-        __HAL_RCC_LPUART2_CONFIG(RCC_LPUART2CLKSOURCE_LSE);
-      }
-#endif
-      if (uart_rx == NP) {
-        if (HAL_HalfDuplex_Init(huart) == HAL_OK) {
-          return;
-        }
-      } else if (HAL_UART_Init(huart) == HAL_OK) {
-        return;
-      }
-    }
-    if (__HAL_RCC_GET_FLAG(RCC_FLAG_HSIRDY)) {
-      if (obj->uart == LPUART1) {
-        __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_HSI);
-      }
-#if defined(LPUART2_BASE)
-      if (obj->uart == LPUART2) {
-        __HAL_RCC_LPUART2_CONFIG(RCC_LPUART2CLKSOURCE_HSI);
-      }
-#endif
-      if (uart_rx == NP) {
-        if (HAL_HalfDuplex_Init(huart) == HAL_OK) {
-          return;
-        }
-      } else if (HAL_UART_Init(huart) == HAL_OK) {
-        return;
-      }
-    }
-    if (obj->uart == LPUART1) {
-#if defined(RCC_LPUART1CLKSOURCE_CSI)
-      __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_CSI);
-#elif defined(RCC_LPUART1CLKSOURCE_PCLK1)
-      __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_PCLK1);
-#elif defined(RCC_LPUART1CLKSOURCE_PCLK3)
-      __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_PCLK3);
-#endif
-    }
-#if defined(LPUART2_BASE)
-    if (obj->uart == LPUART2) {
-      __HAL_RCC_LPUART2_CONFIG(RCC_LPUART2CLKSOURCE_PCLK1);
-    }
-#endif
-    if (uart_rx == NP) {
-      if (HAL_HalfDuplex_Init(huart) == HAL_OK) {
-        return;
-      }
-    } else if (HAL_UART_Init(huart) == HAL_OK) {
-      return;
-    }
-#if defined(RCC_LPUART1CLKSOURCE_SYSCLK)
-    if (obj->uart == LPUART1) {
-      __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_SYSCLK);
-    }
-#endif
-#if defined(LPUART2_BASE)
-    if (obj->uart == LPUART2) {
-      __HAL_RCC_LPUART2_CONFIG(RCC_LPUART2CLKSOURCE_SYSCLK);
-    }
-#endif
-  }
-#endif
-
   if (uart_rx == NP) {
     if (HAL_HalfDuplex_Init(huart) != HAL_OK) {
       return;
@@ -525,20 +399,6 @@ void uart_deinit(serial_t *obj)
       __HAL_RCC_USART6_FORCE_RESET();
       __HAL_RCC_USART6_RELEASE_RESET();
       __HAL_RCC_USART6_CLK_DISABLE();
-      break;
-#endif
-#if defined(LPUART1_BASE)
-    case LPUART1_INDEX:
-      __HAL_RCC_LPUART1_FORCE_RESET();
-      __HAL_RCC_LPUART1_RELEASE_RESET();
-      __HAL_RCC_LPUART1_CLK_DISABLE();
-      break;
-#endif
-#if defined(LPUART2_BASE)
-    case LPUART2_INDEX:
-      __HAL_RCC_LPUART2_FORCE_RESET();
-      __HAL_RCC_LPUART2_RELEASE_RESET();
-      __HAL_RCC_LPUART2_CLK_DISABLE();
       break;
 #endif
 #if defined(UART7_BASE)
@@ -647,23 +507,6 @@ void uart_config_lowpower(serial_t *obj)
     case UART5_INDEX:
       if (__HAL_RCC_GET_UART5_SOURCE() != RCC_UART5CLKSOURCE_HSI) {
         __HAL_RCC_UART5_CONFIG(RCC_UART5CLKSOURCE_HSI);
-      }
-      break;
-#endif
-#if defined(LPUART1_BASE) && defined(__HAL_RCC_LPUART1_CONFIG)
-    case LPUART1_INDEX:
-#ifdef __HAL_RCC_LPUART1_CLKAM_ENABLE
-      __HAL_RCC_LPUART1_CLKAM_ENABLE();
-#endif
-      if (__HAL_RCC_GET_LPUART1_SOURCE() != RCC_LPUART1CLKSOURCE_HSI) {
-        __HAL_RCC_LPUART1_CONFIG(RCC_LPUART1CLKSOURCE_HSI);
-      }
-      break;
-#endif
-#if defined(LPUART2_BASE) && defined(__HAL_RCC_LPUART2_CONFIG)
-    case LPUART2_INDEX:
-      if (__HAL_RCC_GET_LPUART2_SOURCE() != RCC_LPUART2CLKSOURCE_HSI) {
-        __HAL_RCC_LPUART2_CONFIG(RCC_LPUART2CLKSOURCE_HSI);
       }
       break;
 #endif
@@ -978,11 +821,6 @@ void USART2_IRQHandler(void)
   if (uart_handlers[UART2_INDEX] != NULL) {
     HAL_UART_IRQHandler(uart_handlers[UART2_INDEX]);
   }
-#if defined(STM32G0xx) && defined(LPUART2_BASE)
-  if (uart_handlers[LPUART2_INDEX] != NULL) {
-    HAL_UART_IRQHandler(uart_handlers[LPUART2_INDEX]);
-  }
-#endif
 }
 #endif
 
@@ -1097,19 +935,6 @@ void USART6_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(USART6_IRQn);
   HAL_UART_IRQHandler(uart_handlers[UART6_INDEX]);
-}
-#endif
-
-/**
-  * @brief  LPUART 1 IRQ handler
-  * @param  None
-  * @retval None
-  */
-#if defined(LPUART1_BASE)
-void LPUART1_IRQHandler(void)
-{
-  HAL_NVIC_ClearPendingIRQ(LPUART1_IRQn);
-  HAL_UART_IRQHandler(uart_handlers[LPUART1_INDEX]);
 }
 #endif
 
